@@ -1,0 +1,6 @@
+.env
+rechords/
+backups/
+analytics/
+node_modules
+.idea/
