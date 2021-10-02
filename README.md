@@ -11,13 +11,14 @@ Deploy [Rechords](https://github.com/bskp/rechords) on a virtual private server 
 ## Initial deployment
 1. Rename ``template.env`` to ``.env`` and customize its contents
 2. Set up a DNS for the desired ``DOMAIN`` pointing to your VPS
-3. **New Servers only**: run ``mup setup``
-4. Deploy using:
+3. Reverse Proxy [Caddy](https://caddyserver.com) running and configured to include any files in ``/etc/caddy/mup-sites/``
+4. **New Servers only**: run ``mup setup``
+5. Deploy using:
 ~~~
 $ mup deploy
 ~~~
 
-###What happens now?
+### What happens now?
 - The script ``clone_and_isntall_repo.sh`` is run:
 - A shallow copy of the Rechords-Repository gets checked out
 - npm dependencies are installed
@@ -29,24 +30,18 @@ $ mup deploy
 
 ## Dump Production Database
 ~~~
-$ ./backup.sh
+$ ./create_backup.sh
 ~~~
 
 ## Restore Production Database
 
-(TODO)
+**Danger Zone**: This action drops any data on the target database!
 
-## Restore DB-Dump to local MongodB
+~~~
+$ ./restore_from_backup.sh 21-03-31.gz [namespace in dump]
+~~~
 
-- Install mongodb-database-tools (cli client tools)
-- Start Meteor (Meteor starts its own lightweight dev mongoserver)
-- `meteor mongo` will show you the connection to mongodb (port and DB-Name)
-- Use the mongorestore command
-```
-mongorestore --port 3001 --gzip --archive=backups/00-00-00.gz 
-mongorestore --port 3001 --archive=../backups/asdf.bson --nsFrom=Rechords.* --nsTo=meteor.* --drop
-```
-- This changes the DB's name from ``Rechords`` to ``meteor``, as it is expected by a locally running development server.
-
-
-
+The dumps' namespace equals the configured domain in .env, with all dots (.) replaced as hyphens (-):
+- ``Rechords`` for legacy deployments
+- ``testing-hoelibu-ch`` for the testing deployment
+- ``hoelibu-ch`` for the productive deployment
