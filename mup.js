@@ -42,7 +42,8 @@ module.exports = {
     },
     'pre.meteor.deploy': {
       remoteCommand:
-      'echo "' + process.env.DOMAIN + ' {\n\treverse_proxy :' + process.env.INTERNAL_PORT + '\n}" > /etc/caddy/mup-sites/' + process.env.DOMAIN + ' && sudo systemctl restart caddy'
+      // If no config exists, a default one is added to /etc/caddy/mup-sites
+      'CONF="/etc/caddy/mup-sites/' + process.env.DOMAIN + '" && test -f "$CONF" || echo "' + process.env.DOMAIN + ' {\n\treverse_proxy :' + process.env.INTERNAL_PORT + '\n}" > $CONF && sudo systemctl restart caddy'
     }
   },
 
